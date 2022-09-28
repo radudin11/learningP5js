@@ -48,6 +48,8 @@ function draw() {
          rect(j*squareSize, i*squareSize, squareSize, squareSize)
      }
   }
+
+  updateMatrix();
 }
 
 function keyPressed()  {
