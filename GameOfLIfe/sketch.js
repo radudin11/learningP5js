@@ -30,27 +30,7 @@ function setup() {
         rect(j*squareSize, i*squareSize, squareSize, squareSize)
     }
   } 
-  //frameRate(fr)
-  // matrix[90] = 1;
-  // matrix[91] = 1;
-  // matrix[92] = 1;
-  // matrix[matrixHeight + 2] = 1;
-  // matrix[matrixHeight + 1] = 1;
-  // matrix[matrixHeight * 2 + 1] = 1;
-  // matrix[matrixHeight * 2 + 2] = 1;
-
-  // matrix[matrixHeight * 20 + 20] = 1;
-  // matrix[matrixHeight * 20 + 21] = 1;
-  // matrix[matrixHeight * 19 + 22] = 1;
-  // matrix[matrixHeight * 20 + 23] = 1;
-  // matrix[matrixHeight * 21 + 23] = 1;
-  // matrix[matrixHeight * 23 + 23] = 1;
-  // matrix[matrixHeight * 22 + 22] = 1;
-  // matrix[matrixHeight * 22 + 21] = 1;
-  // matrix[matrixHeight * 22 + 20] = 1;
-  // matrix[matrixHeight * 21 + 20] = 1;
-
-
+  frameRate(fr)
   noLoop()
 }
 
@@ -62,7 +42,7 @@ function draw() {
         //  if (matrix[(i + 1) * matrixWidth + j + 1] == 1) {
           if (matrix[i + 1][j + 1] == 1) {
             colorMode(HSL, 360);
-            hue = distance(matrixHeight/2, matrixWidth/2, i, j) * 15 % 360;
+            hue = (matrixHeight - distance(matrixHeight/2, matrixWidth/2, i, j)) * 15 % 360;
             fill(hue, 200, 200)
          } else {
           colorMode(RGB)
@@ -87,6 +67,11 @@ function keyPressed()  {
       return;
     }
     loop();
+  }
+
+  if (keyCode == 83){
+    drawStar()
+    redraw()
   }
 }
 
@@ -157,4 +142,16 @@ function mouseClicked() {
   }
   redraw()
 }
+
+function drawStar() {
+  for (i = 1; i <= matrixHeight; i++) {
+    for(j = 1; j <= matrixWidth; j++) {
+      if (i == j || i == matrixHeight/2 || j == matrixWidth/2 || i + j == matrixWidths)
+        matrix[i][j] = 1
+      else
+       matrix[i][j] = 0
+    }
+  }
+}
+
 
