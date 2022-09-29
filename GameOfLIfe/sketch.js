@@ -4,8 +4,8 @@ const squareSize = 10
 let fr = 10
 var hue = 0;
 
-const width = 420
-const height = 400
+const width = 800
+const height = 800
 let matrixHeight = height / squareSize
 let matrixWidth = width / squareSize
 
@@ -73,6 +73,16 @@ function keyPressed()  {
     drawStar()
     redraw()
   }
+
+  if (keyCode == UP_ARROW) {
+    fr+=5
+    frameRate(fr)
+  }
+  if (keyCode == DOWN_ARROW) {
+    fr-=5
+    frameRate(fr)
+  }
+
 }
 
 function updateMatrix() {
@@ -128,8 +138,8 @@ function nrOfNeighbours(i, j) {
 function mouseClicked() {
   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height)
     return
-  x = floor(mouseX / 10) + 1;
-  y = floor(mouseY / 10) + 1;
+  x = floor(mouseX / squareSize) + 1;
+  y = floor(mouseY / squareSize) + 1;
   // if (matrix[y * matrixWidth + x]) {
   //   matrix[y * matrixWidth + x] = 0;
   // } else {
@@ -146,7 +156,7 @@ function mouseClicked() {
 function drawStar() {
   for (i = 1; i <= matrixHeight; i++) {
     for(j = 1; j <= matrixWidth; j++) {
-      if (i == j || i == matrixHeight/2 || j == matrixWidth/2 || i + j == matrixWidth)
+      if (i + matrixWidth/2 == j + matrixHeight/2 || i == matrixHeight/2 || j == matrixWidth/2 || i + j == (matrixHeight + matrixWidth) / 2)
         matrix[i][j] = 1
       else
        matrix[i][j] = 0
