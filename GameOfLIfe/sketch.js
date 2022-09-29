@@ -1,7 +1,7 @@
 const gray = 40
 const squareSize = 10
 
-let fr = 7
+let fr = 10
 var hue = 0;
 
 const width = 420
@@ -146,7 +146,7 @@ function mouseClicked() {
 function drawStar() {
   for (i = 1; i <= matrixHeight; i++) {
     for(j = 1; j <= matrixWidth; j++) {
-      if (i == j || i == matrixHeight/2 || j == matrixWidth/2 || i + j == matrixWidths)
+      if (i == j || i == matrixHeight/2 || j == matrixWidth/2 || i + j == matrixWidth)
         matrix[i][j] = 1
       else
        matrix[i][j] = 0
