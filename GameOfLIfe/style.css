@@ -1,8 +1,15 @@
 html, body {
   margin: 0;
   padding: 0;
+  background-color: rgb(19, 0, 21);
+  text-align: center;
+  color: floralwhite;
 }
 
 canvas {
   display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }

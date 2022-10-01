@@ -1,17 +1,19 @@
 const gray = 40
 const squareSize = 10
 
+let rainbow = true
+
 let fr = 10
 var hue = 0;
 
-const width = 800
-const height = 800
+const width = 500
+const height = 500 
 let matrixHeight = height / squareSize
 let matrixWidth = width / squareSize
 
 let matrix = new Array(matrixHeight+2)
 for (var i = 0; i < matrix.length; i++) {
-  matrix[i] = new Array(matrixWidth + 2).fill(0)
+  matrix[i] = new Array(matrixWidth + 2).fill(1)
 }
 
 // let matrix = new Array(matrixHeight +2) * (matrixWidth + 2))
@@ -41,11 +43,13 @@ function draw() {
      for(j = 0; j < matrixWidth; j++) {
         //  if (matrix[(i + 1) * matrixWidth + j + 1] == 1) {
           if (matrix[i + 1][j + 1] == 1) {
-            colorMode(HSL, 360);
-            hue = (matrixHeight - distance(matrixHeight/2, matrixWidth/2, i, j)) * 15 % 360;
-            fill(hue, 200, 200)
+            if (rainbow == true) {
+              hue = (matrixHeight - distance(matrixHeight/2, matrixWidth/2, i, j)) * 15 % 360;
+              fillRainbow(hue)
+            } else {
+              fill(255)
+            }
          } else {
-          colorMode(RGB)
            fill(gray)
          }
          rect(j*squareSize, i*squareSize, squareSize, squareSize)
@@ -60,8 +64,14 @@ function distance(x1, y1, x2, y2) {
   return sqrt((x2 -x1) * (x2 -x1) + (y2 -y1) * (y2 -y1))
 }
 
+function fillRainbow(hue) {
+  colorMode(HSL, 360)
+  fill(hue, 200, 200)
+  colorMode(RGB)
+}
+
 function keyPressed()  {
-  if (keyCode == 32) {
+  if (keyCode == 80) {  // play/pause (p)
     if (isLooping() == true) {
       noLoop();
       return;
@@ -69,7 +79,7 @@ function keyPressed()  {
     loop();
   }
 
-  if (keyCode == 83){
+  if (keyCode == 83){  // draw a star (s)
     drawStar()
     redraw()
   }
@@ -81,6 +91,14 @@ function keyPressed()  {
   if (keyCode == DOWN_ARROW) {
     fr-=5
     frameRate(fr)
+  }
+  if (keyCode == 67) {  // clean (c)
+    for (i = 1; i <= matrixHeight; i++) {
+      for(j = 1; j <= matrixWidth; j++) {
+        matrix[i][j] = 0
+      }
+    }
+    redraw()
   }
 
 }
