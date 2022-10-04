@@ -15,6 +15,8 @@ for (var i = 0; i < matrix.length; i++) {
   matrix[i] = new Array(matrixWidth + 2).fill(NOTCHECKED)
 }
 
+matrix[5][5] = BOMB
+
 let directions = new Array(8);
 for (var i = 0; i < directions.length; i++) {
   directions[i] = new Array(2)
@@ -89,49 +91,62 @@ function mousePressed() {
   x = floor(mouseX / CELLSIZE) + 1;
   y = floor(mouseY / CELLSIZE) + 1;
   if (mouseButton == RIGHT) {
-    if (matrix[y][x] == FLAGGED) {
-      matrix[y][x] = NOTCHECKED
+    if (matrix[y][x] == FLAGGED){
+        matrix[y][x] = NOTCHECKED
     } else {
-      if (matrix[y][x] == NOTCHECKED){
-        matrix[y][x] = FLAGGED
-      } else {
-        if (matrix[y][x] == BOMB){
-          matrix[y][x] == FLAGGED_BOMB
-        } else {
-          if (matrix[y][x] == FLAGGED_BOMB)
+        if (matrix[y][x] == NOTCHECKED){
+            matrix[y][x] = FLAGGED
+        }
+    }
+    if (matrix[y][x] == BOMB){
+        console.log("Bomb")
+        matrix[y][x] = FLAGGED_BOMB
+    } else {
+        if (matrix[y][x] == FLAGGED_BOMB) {
             matrix[y][x] = BOMB
         }
-
-      }
     }
   }
 
   if (mouseButton == LEFT) {
+    console.log("Pressed left")
     updateMatrix(x, y);
   }
+  console.log(matrix[y][x])
   redraw()
 }
 
+function youLost() {
+    console.log("You lost!")
+}
+
 function updateMatrix(x, y) {
+  console.log("updating matrix")
+  console.log(matrix[y][x])
+
   if (matrix[y][x] == BOMB) {
     youLost();
     return
   }
 
-  if (matrix[x][y] == NOTCHECKED) {
+  if (matrix[y][x] == NOTCHECKED) {
+    console.log("finding bombs")
     findBombsRec(x,y)
   }
 }
 
 function findBombsRec(x,y) {
-  ret = 0
   if (matrix[y][x] == BOMB || matrix[y][x] == FLAGGED_BOMB )
-    return 1
+    return 1;
+  if (matrix[y][x] == FLAGGED)
+    return 0;
+  matrix[y][x] = 0
   for (let i = 0; i < 8; i++) {
     new_y = y + directions[i][0]
     new_x = x + directions[i][1]
     if (new_y == 0 || new_y > matrixHeight || new_x == 0 || new_x > matrixWidth)
-      return 0
-    matrix[y][x] += findBombsRec(new_x, new_y)
+      continue
+    if (matrix[new_y][new_x] < 0)
+        matrix[y][x] += findBombsRec(new_x, new_y)
   }
 }
