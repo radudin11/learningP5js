@@ -1,9 +1,10 @@
 const w = 450
-const h = 900
+const h = 450
 const CELLSIZE = 15
 const NOTCHECKED = -1
 const FLAGGED = -2
 const BOMB = -3
+const FLAGGED_BOMB = -4
 
 
 let matrixHeight = h / CELLSIZE
@@ -11,24 +12,24 @@ let matrixWidth = w / CELLSIZE
 
 let matrix = new Array(matrixHeight+2)
 for (var i = 0; i < matrix.length; i++) {
-  matrix[i] = new Array(matrixWidth + 2).fill(-1)
+  matrix[i] = new Array(matrixWidth + 2).fill(NOTCHECKED)
 }
+
+let directions = new Array(8);
+for (var i = 0; i < directions.length; i++) {
+  directions[i] = new Array(2)
+}
+directions = [[0, -1], [0 , 1], [1, -1], [1, 0], [1, 1], [-1, 1], [-1, 0], [-1, -1]]
+console.log(directions)
 
 function setup() {
   createCanvas(w, h);
   background(128);
-  for (let i = 0; i < w/CELLSIZE; i++){
-    for (let j = 0; j < h/CELLSIZE;j++) {
-      fill(100);
-      //noSmooth();
-      rect(i*CELLSIZE,j*CELLSIZE,CELLSIZE, CELLSIZE);
-    }
-  }
   noLoop();
 }
 
 function draw() {
-  for (let i = 0; i <matrixHeight; i++){
+  for (let i = 0; i < matrixHeight;i++){
     for (let j = 0; j < matrixWidth;j++) {
       drawCell(i,j);
     }
@@ -38,18 +39,29 @@ function draw() {
 
 
 function drawCell(i, j) {
-  if (matrix[i + 1][j + 1] >= 0 || matrix[i + 1][j + 1] == BOMB ) {
-    fill(192, 192, 192);
+  if (matrix[i + 1][j + 1] == NOTCHECKED || matrix[i + 1][j + 1] == BOMB) {
+    fill(100)
     rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
+    return
+  }
+  if (matrix[i + 1][j + 1] == FLAGGED || matrix[i + 1][j + 1] == FLAGGED_BOMB ) {
+    drawFlag(i, j)
+    return
   }
   
+  fill(192, 192, 192);
+  rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
   if (matrix[i + 1][j + 1] > 0) {
     output = `${matrix[i + 1][j + 1]}`
     let bombsNear = createElement('h6', output)
     bombsNear.style('color', colorPicker(matrix[i + 1][j + 1]))
-    bombsNear.position(j*CELLSIZE + 5,i*CELLSIZE)
+    bombsNear.position(j*CELLSIZE + 180,i*CELLSIZE)
   }
+}
 
+function drawFlag(i,j) {
+  fill(250,0,0);
+  rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
 }
 
 function colorPicker(nr) {
@@ -71,4 +83,55 @@ function colorPicker(nr) {
     return "#808080"
 
 
+}
+
+function mousePressed() {
+  x = floor(mouseX / CELLSIZE) + 1;
+  y = floor(mouseY / CELLSIZE) + 1;
+  if (mouseButton == RIGHT) {
+    if (matrix[y][x] == FLAGGED) {
+      matrix[y][x] = NOTCHECKED
+    } else {
+      if (matrix[y][x] == NOTCHECKED){
+        matrix[y][x] = FLAGGED
+      } else {
+        if (matrix[y][x] == BOMB){
+          matrix[y][x] == FLAGGED_BOMB
+        } else {
+          if (matrix[y][x] == FLAGGED_BOMB)
+            matrix[y][x] = BOMB
+        }
+
+      }
+    }
   }
+
+  if (mouseButton == LEFT) {
+    updateMatrix(x, y);
+  }
+  redraw()
+}
+
+function updateMatrix(x, y) {
+  if (matrix[y][x] == BOMB) {
+    youLost();
+    return
+  }
+
+  if (matrix[x][y] == NOTCHECKED) {
+    findBombsRec(x,y)
+  }
+}
+
+function findBombsRec(x,y) {
+  ret = 0
+  if (matrix[y][x] == BOMB || matrix[y][x] == FLAGGED_BOMB )
+    return 1
+  for (let i = 0; i < 8; i++) {
+    new_y = y + directions[i][0]
+    new_x = x + directions[i][1]
+    if (new_y == 0 || new_y > matrixHeight || new_x == 0 || new_x > matrixWidth)
+      return 0
+    matrix[y][x] += findBombsRec(new_x, new_y)
+  }
+}
