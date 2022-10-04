@@ -54,11 +54,18 @@ function placeBombs() {
 }
 
 function drawCell(i, j) {
-  if (matrix[i + 1][j + 1] == NOTCHECKED || matrix[i + 1][j + 1] == BOMB) {
+  if (matrix[i + 1][j + 1] == NOTCHECKED){
     fill(100)
     rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
     return
   }
+
+  if (matrix[i + 1][j + 1] == BOMB) {
+    fill(0, 255, 0)
+    rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
+    return
+  }
+
   if (matrix[i + 1][j + 1] == FLAGGED || matrix[i + 1][j + 1] == FLAGGED_BOMB ) {
     drawFlag(i, j)
     return
@@ -70,7 +77,7 @@ function drawCell(i, j) {
     output = `${matrix[i + 1][j + 1]}`
     let bombsNear = createElement('h6', output)
     bombsNear.style('color', colorPicker(matrix[i + 1][j + 1]))
-    bombsNear.position(j*CELLSIZE + 290,i*CELLSIZE)
+    bombsNear.position(j*CELLSIZE + 365,i*CELLSIZE)
   }
 }
 
