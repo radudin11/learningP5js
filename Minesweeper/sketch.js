@@ -1,10 +1,11 @@
-const w = 450
-const h = 450
 const CELLSIZE = 15
+const w = 16 * CELLSIZE
+const h = 30 * CELLSIZE
 const NOTCHECKED = -1
 const FLAGGED = -2
 const BOMB = -3
 const FLAGGED_BOMB = -4
+const NR_OF_BOMBS = 99
 
 
 let matrixHeight = h / CELLSIZE
@@ -15,18 +16,18 @@ for (var i = 0; i < matrix.length; i++) {
   matrix[i] = new Array(matrixWidth + 2).fill(NOTCHECKED)
 }
 
-matrix[5][5] = BOMB
 
 let directions = new Array(8);
 for (var i = 0; i < directions.length; i++) {
   directions[i] = new Array(2)
 }
-directions = [[0, -1], [0 , 1], [1, -1], [1, 0], [1, 1], [-1, 1], [-1, 0], [-1, -1]]
+directions = [[0, -1], [0 , 1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]]
 console.log(directions)
 
 function setup() {
   createCanvas(w, h);
   background(128);
+  placeBombs();
   noLoop();
 }
 
@@ -39,6 +40,18 @@ function draw() {
  
 }
 
+
+function placeBombs() {
+    let bombsPlaced = 0
+    while (bombsPlaced < NR_OF_BOMBS) {
+        y = floor(random() * matrixHeight) + 1
+        x = floor(random() * matrixWidth) + 1
+        if (matrix[y][x] == NOTCHECKED) {
+            matrix[y][x] = BOMB
+            bombsPlaced++;
+        }
+    }
+}
 
 function drawCell(i, j) {
   if (matrix[i + 1][j + 1] == NOTCHECKED || matrix[i + 1][j + 1] == BOMB) {
@@ -57,7 +70,7 @@ function drawCell(i, j) {
     output = `${matrix[i + 1][j + 1]}`
     let bombsNear = createElement('h6', output)
     bombsNear.style('color', colorPicker(matrix[i + 1][j + 1]))
-    bombsNear.position(j*CELLSIZE + 180,i*CELLSIZE)
+    bombsNear.position(j*CELLSIZE + 290,i*CELLSIZE)
   }
 }
 
@@ -136,17 +149,23 @@ function updateMatrix(x, y) {
 }
 
 function findBombsRec(x,y) {
-  if (matrix[y][x] == BOMB || matrix[y][x] == FLAGGED_BOMB )
-    return 1;
-  if (matrix[y][x] == FLAGGED)
-    return 0;
   matrix[y][x] = 0
   for (let i = 0; i < 8; i++) {
     new_y = y + directions[i][0]
     new_x = x + directions[i][1]
     if (new_y == 0 || new_y > matrixHeight || new_x == 0 || new_x > matrixWidth)
       continue
-    if (matrix[new_y][new_x] < 0)
-        matrix[y][x] += findBombsRec(new_x, new_y)
+    if (matrix[new_y][new_x] == BOMB || matrix[new_y][new_x] == FLAGGED_BOMB)
+        matrix[y][x]++;
+  }
+  if (matrix[y][x] > 0)
+    return
+  for (let i = 0; i < 8; i++) {
+    new_y = y + directions[i][0]
+    new_x = x + directions[i][1]
+    if (new_y == 0 || new_y > matrixHeight || new_x == 0 || new_x > matrixWidth)
+      continue
+    if (matrix[new_y][new_x] == NOTCHECKED)
+        findBombsRec(new_x, new_y)
   }
 }
