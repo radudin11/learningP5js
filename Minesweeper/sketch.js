@@ -13,9 +13,9 @@ let matrixWidth = w / CELLSIZE
 
 
 // grid saved as 2d array
-let matrix = new Array(matrixHeight+2)
+let matrix = new Array(matrixHeight)
 for (var i = 0; i < matrix.length; i++) {
-  matrix[i] = new Array(matrixWidth + 2).fill(NOTCHECKED)
+  matrix[i] = new Array(matrixWidth).fill(NOTCHECKED)
 }
 
 // directions array
@@ -59,8 +59,8 @@ function placeBombs() {
    */  
   let bombsPlaced = 0
     while (bombsPlaced < NR_OF_BOMBS) {
-        y = floor(random() * matrixHeight) + 1
-        x = floor(random() * matrixWidth) + 1
+        y = floor(random() * matrixHeight)
+        x = floor(random() * matrixWidth)
         if (matrix[y][x] == NOTCHECKED) {
             matrix[y][x] = BOMB
             bombsPlaced++;
@@ -72,13 +72,13 @@ function drawCell(i, j) {
   /* draws a square on the screen based on the value
    * int the matrix at the given position
   */
-  if (matrix[i + 1][j + 1] == NOTCHECKED){
+  if (matrix[i][j] == NOTCHECKED){
     fill(100)
     rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
     return
   }
 
-  if (matrix[i + 1][j + 1] == BOMB) {
+  if (matrix[i][j] == BOMB) {
     fill(100)
 
     // uncoment to highlight bombs
@@ -88,17 +88,17 @@ function drawCell(i, j) {
     return
   }
 
-  if (matrix[i + 1][j + 1] == FLAGGED || matrix[i + 1][j + 1] == FLAGGED_BOMB ) {
+  if (matrix[i][j] == FLAGGED || matrix[i][j] == FLAGGED_BOMB ) {
     drawFlag(i, j)
     return
   }
   
   fill(192, 192, 192);
   rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
-  if (matrix[i + 1][j + 1] > 0) {
-    output = `${matrix[i + 1][j + 1]}`
+  if (matrix[i][j] > 0) {
+    output = `${matrix[i][j]}`
     let bombsNear = createElement('h6', output)
-    bombsNear.style('color', colorPicker(matrix[i + 1][j + 1]))
+    bombsNear.style('color', colorPicker(matrix[i][j]))
     bombsNear.position(j*CELLSIZE + 125,i*CELLSIZE)
   }
 }
@@ -130,8 +130,8 @@ function colorPicker(nr) {
 }
 
 function mousePressed() {
-  x = floor(mouseX / CELLSIZE) + 1;
-  y = floor(mouseY / CELLSIZE) + 1;
+  x = floor(mouseX / CELLSIZE);
+  y = floor(mouseY / CELLSIZE);
   if (mouseButton == RIGHT) {
     if (matrix[y][x] == FLAGGED){
         matrix[y][x] = NOTCHECKED
@@ -182,7 +182,7 @@ function findBombsRec(x,y) {
   for (let i = 0; i < 8; i++) {
     new_y = y + directions[i][0]
     new_x = x + directions[i][1]
-    if (new_y == 0 || new_y > matrixHeight || new_x == 0 || new_x > matrixWidth)
+    if (new_y < 0 || new_y >= matrixHeight || new_x < 0 || new_x >= matrixWidth)
       continue
     if (matrix[new_y][new_x] == BOMB || matrix[new_y][new_x] == FLAGGED_BOMB)
         matrix[y][x]++;
@@ -192,7 +192,7 @@ function findBombsRec(x,y) {
   for (let i = 0; i < 8; i++) {
     new_y = y + directions[i][0]
     new_x = x + directions[i][1]
-    if (new_y == 0 || new_y > matrixHeight || new_x == 0 || new_x > matrixWidth)
+    if (new_y < 0 || new_y >= matrixHeight || new_x < 0 || new_x >= matrixWidth)
       continue
     if (matrix[new_y][new_x] == NOTCHECKED)
         findBombsRec(new_x, new_y)
