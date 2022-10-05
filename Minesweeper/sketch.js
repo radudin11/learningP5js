@@ -11,17 +11,30 @@ const NR_OF_BOMBS = 99
 let matrixHeight = h / CELLSIZE
 let matrixWidth = w / CELLSIZE
 
+
+// grid saved as 2d array
 let matrix = new Array(matrixHeight+2)
 for (var i = 0; i < matrix.length; i++) {
   matrix[i] = new Array(matrixWidth + 2).fill(NOTCHECKED)
 }
 
-
+// directions array
+// directions[n][0] for y
+// directions[n][1] for x
 let directions = new Array(8);
 for (var i = 0; i < directions.length; i++) {
   directions[i] = new Array(2)
 }
-directions = [[0, -1], [0 , 1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]]
+directions = [
+  [0, -1],  // LEFT 
+  [0 , 1],  //RIGHT
+  [1, 0],   //DOWN
+  [-1, 0],  //UP
+  [1, 1],   // RIGHT_DOWN
+  [-1, 1],  //RIGHT_UP
+  [1, -1],  // LEFT_DOWN
+  [-1, -1]  // LEFT_UP
+  ]
 console.log(directions)
 
 function setup() {
@@ -37,12 +50,14 @@ function draw() {
       drawCell(i,j);
     }
   }
- 
 }
 
-
 function placeBombs() {
-    let bombsPlaced = 0
+  /* places bombs randomly on the grid
+   * to change the number of bombs change 
+   *the NR_OF_BOMBS constant at the top
+   */  
+  let bombsPlaced = 0
     while (bombsPlaced < NR_OF_BOMBS) {
         y = floor(random() * matrixHeight) + 1
         x = floor(random() * matrixWidth) + 1
@@ -54,6 +69,9 @@ function placeBombs() {
 }
 
 function drawCell(i, j) {
+  /* draws a square on the screen based on the value
+   * int the matrix at the given position
+  */
   if (matrix[i + 1][j + 1] == NOTCHECKED){
     fill(100)
     rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
@@ -61,7 +79,11 @@ function drawCell(i, j) {
   }
 
   if (matrix[i + 1][j + 1] == BOMB) {
-    fill(0, 255, 0)
+    fill(100)
+
+    // uncoment to highlight bombs
+    // fill(0, 255, 0)
+
     rect(j*CELLSIZE,i*CELLSIZE,CELLSIZE, CELLSIZE);
     return
   }
@@ -77,7 +99,7 @@ function drawCell(i, j) {
     output = `${matrix[i + 1][j + 1]}`
     let bombsNear = createElement('h6', output)
     bombsNear.style('color', colorPicker(matrix[i + 1][j + 1]))
-    bombsNear.position(j*CELLSIZE + 365,i*CELLSIZE)
+    bombsNear.position(j*CELLSIZE + 125,i*CELLSIZE)
   }
 }
 
